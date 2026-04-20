@@ -32,10 +32,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     onAuthStateChanged(this.fb.auth, (user) => {
       if (user) {
-        this.unsubscribe = this.financeService.listenToTransactions(user.uid, () => {
-          // CRITICAL: Forces a full application check, ensuring zoneless UI updates
-          this.appRef.tick();
-        });
+        // Listen to transactions
+        this.financeService.listenToTransactions(user.uid);
+        // Listen to profile/budget
+        this.financeService.listenToUserProfile(user.uid);
       }
     });
   }

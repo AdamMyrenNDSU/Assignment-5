@@ -1,6 +1,15 @@
-<app-auth></app-auth>
+<!-- app.component.html -->
+<nav class="tab-nav">
+  <a routerLink="/profile" routerLinkActive="active-tab">User Profile</a>
 
-<app-dashboard></app-dashboard>
+  <!-- This now matches the 'auth' variable in your TS -->
+  @if (auth.currentUser()) {
+    <a routerLink="/dashboard" routerLinkActive="active-tab">Dashboard</a>
+    <a routerLink="/add-transaction" routerLinkActive="active-tab">Add Transaction</a>
+  }
+</nav>
+
+<router-outlet></router-outlet>
 
 <!--@if (authComponent.user()) {
   <app-dashboard></app-dashboard>

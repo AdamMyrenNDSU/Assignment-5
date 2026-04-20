@@ -1,0 +1,19 @@
+.tab-nav {
+  display: flex;
+  gap: 20px;
+  padding: 15px;
+  background: #f4f4f4;
+}
+.tab-nav a {
+  text-decoration: none;
+  color: #333;
+  padding-bottom: 5px;
+}
+.active-tab {
+  border-bottom: 3px solid #007bff;
+  color: #007bff;
+  font-weight: bold;
+}
+.content-container {
+  padding: 20px;
+}

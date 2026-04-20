@@ -1,4 +1,4 @@
-import { inject, Injectable, signal, effect } from '@angular/core';
+import { inject, Injectable, signal, effect, NgZone } from '@angular/core';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -21,8 +21,19 @@ export interface UserProfile {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private fb = inject(FirebaseService);
+  private ngZone = inject(NgZone); // 1. Inject NgZone
 
   public currentUser = signal<User | null>(null);
+
+  constructor() {
+    onAuthStateChanged(this.fb.auth, (user) => {
+      // 2. Run inside NgZone to trigger UI updates
+      this.ngZone.run(() => {
+        this.currentUser.set(user);
+        console.log('Auth state updated in UI:', user?.uid);
+      });
+    });
+  }
 
   get userId(): string | null {
     return this.currentUser()?.uid || null;

@@ -29,6 +29,7 @@ export class FinanceService {
   transactions = signal<Transaction[]>([]);
   categories = signal(['Food', 'Rent', 'Travel', 'Work', 'Entertainment']);
   budgets = signal<Record<string, number>>({ Food: 500, Rent: 1200 }); // Monthly limits
+  userBudget = signal<number>(0);
 
   searchQuery = signal('');
   selectedCategory = signal('All');
@@ -36,6 +37,35 @@ export class FinanceService {
   // Filters
   filterCategory = signal<string>('All');
   filterDateRange = signal<{ start: string; end: string } | null>(null);
+
+  // 1. New Listener for User Profile
+  listenToUserProfile(userId: string) {
+    const userDocRef = doc(this.fb.db, 'users', userId);
+    return onSnapshot(userDocRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        // Update our signal with the budgetGoals from Firestore
+        this.userBudget.set(data['budgetGoals'] || 0);
+      }
+    });
+  }
+
+  // 2. Updated Budget Alerts
+  // Comparing total expenses against the single budget goal from profile
+  budgetAlerts = computed(() => {
+    const spent = this.totalExpenses();
+    const limit = this.userBudget();
+
+    if (limit === 0) return []; // No budget set
+
+    return [
+      {
+        category: 'Total Budget',
+        isNearing: spent > limit * 0.8 && spent <= limit,
+        isExceeded: spent > limit,
+      },
+    ].filter((a) => a.isNearing || a.isExceeded);
+  });
 
   // 4. Dashboard & Analytics (Computed)
   filteredTransactions = computed(() => {
@@ -52,18 +82,6 @@ export class FinanceService {
       .filter((t) => t.type === 'expense')
       .reduce((acc, t) => acc + t.amount, 0),
   );
-
-  budgetAlerts = computed(() => {
-    return Object.keys(this.budgets())
-      .map((cat) => {
-        const spent = this.transactions()
-          .filter((t) => t.category === cat && t.type === 'expense')
-          .reduce((sum, t) => sum + t.amount, 0);
-        const limit = this.budgets()[cat];
-        return { category: cat, isNearing: spent > limit * 0.8, isExceeded: spent > limit };
-      })
-      .filter((a) => a.isNearing);
-  });
 
   listenToTransactions(userId: string, onUpdate?: () => void) {
     const q = query(
