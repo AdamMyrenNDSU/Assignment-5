@@ -1,16 +1,18 @@
 <!-- dashboard.component.html -->
 <div class="dashboard-container">
+  <!-- This handles the Add/Edit logic seamlessly -->
   <section class="transaction-section">
     <app-transaction></app-transaction>
   </section>
+
   <!-- 1. Overview Stats -->
   <section class="stats-grid">
-    <div class="card">
+    <div class="stat-card panel">
       <h3>Total Expenses</h3>
-      <p class="amount text-red">${{ financeService.totalExpenses() }}</p>
+      <p class="amount text-red">${{ financeService.rawTotalExpenses() }}</p>
     </div>
 
-    <div class="card">
+    <div class="stat-card panel">
       <h3>Budget Alerts</h3>
       @for (alert of financeService.budgetAlerts(); track alert.category) {
         <div class="alert" [class.danger]="alert.isExceeded">
@@ -22,25 +24,13 @@
     </div>
   </section>
 
-  <!-- 2. Add New Transaction -->
-  <section class="card form-inline">
-    <input type="number" [(ngModel)]="newTransaction.amount" placeholder="Amount" />
-    <select [(ngModel)]="newTransaction.category">
-      @for (cat of financeService.categories(); track cat) {
-        <option [value]="cat">{{ cat }}</option>
-      }
-    </select>
-    <input type="text" [(ngModel)]="newTransaction.notes" placeholder="Notes (e.g. Lunch)" />
-    <button (click)="handleAdd()">Add Transaction</button>
-  </section>
-
-  <!-- 3. Filters -->
-  <section class="filters">
+  <!-- 2. Filters (Styled to match your glass inputs) -->
+  <section class="panel filter-bar">
     <input
       type="text"
       [ngModel]="financeService.searchQuery()"
       (ngModelChange)="financeService.searchQuery.set($event)"
-      placeholder="Search transactions..."
+      placeholder="Search notes..."
     />
 
     <select
@@ -54,8 +44,8 @@
     </select>
   </section>
 
-  <!-- 4. Transactions List -->
-  <section class="card list-container">
+  <!-- 3. Transactions List -->
+  <section class="panel list-container">
     <h2>Recent History</h2>
     <table>
       <thead>
@@ -69,14 +59,22 @@
       <tbody>
         @for (t of financeService.filteredTransactions(); track t.id) {
           <tr>
-            <td>{{ t.category }}</td>
+            <td>
+              <span class="pill" [ngClass]="t.type">{{ t.category }}</span>
+            </td>
             <td>{{ t.notes }}</td>
-            <td [class.text-red]="t.type === 'expense'">${{ t.amount }}</td>
-            <td><button (click)="delete(t.id!)" class="btn-delete">🗑️</button></td>
+            <td [style.color]="t.type === 'expense' ? '#f87171' : '#4ade80'">
+              {{ t.type === 'expense' ? '-' : '+' }}${{ t.amount }}
+            </td>
+            <td>
+              <button (click)="delete(t.id!)" class="icon-btn">🗑️</button>
+            </td>
           </tr>
         } @empty {
           <tr>
-            <td colspan="4">No transactions found.</td>
+            <td colspan="4" style="text-align: center; padding: 40px">
+              No transactions found. Start by adding one above!
+            </td>
           </tr>
         }
       </tbody>

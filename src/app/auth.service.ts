@@ -1,9 +1,11 @@
-import { inject, Injectable } from '@angular/core';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signInWithPopup, 
-  GoogleAuthProvider 
+import { inject, Injectable, signal, effect } from '@angular/core';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  User,
 } from 'firebase/auth';
 import { doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
 import { FirebaseService } from './firebase.service';
@@ -20,25 +22,23 @@ export interface UserProfile {
 export class AuthService {
   private fb = inject(FirebaseService);
 
+  public currentUser = signal<User | null>(null);
+
+  get userId(): string | null {
+    return this.currentUser()?.uid || null;
+  }
+
   // 1. User Registration
   async register(email: string, pass: string, name: string) {
     try {
-      // 1. Create the user in Firebase Auth
       const credential = await createUserWithEmailAndPassword(this.fb.auth, email, pass);
       const user = credential.user;
 
-      // 2. Create the initial profile document in Firestore
-      const profileData = {
-        name: name,
-        email: email,
-        budgetGoals: 0
-      };
-      
+      const profileData = { name: name, email: email, budgetGoals: 0 };
       await setDoc(doc(this.fb.db, 'users', user.uid), profileData);
-      
       return user;
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error('Registration error:', error);
       throw error;
     }
   }
@@ -47,14 +47,13 @@ export class AuthService {
   async loginWithGoogle() {
     const provider = new GoogleAuthProvider();
     const res = await signInWithPopup(this.fb.auth, provider);
-    // Check if profile exists, if not, create it
     const docRef = doc(this.fb.db, 'users', res.user.uid);
     const snap = await getDoc(docRef);
     if (!snap.exists()) {
-      await this.createProfile(res.user.uid, { 
-        name: res.user.displayName || '', 
-        email: res.user.email || '', 
-        budgetGoals: 0 
+      await this.createProfile(res.user.uid, {
+        name: res.user.displayName || '',
+        email: res.user.email || '',
+        budgetGoals: 0,
       });
     }
   }
@@ -75,12 +74,12 @@ export class AuthService {
     if (docSnap.exists()) {
       return docSnap.data();
     } else {
-      console.warn("No profile found for this user in Firestore.");
+      console.warn('No profile found for this user in Firestore.');
       return null;
     }
   }
 
-   async updateProfile(uid: string, data: Partial<UserProfile>) {
+  async updateProfile(uid: string, data: Partial<UserProfile>) {
     // 1. Update Firebase Auth display name if name is provided
     if (data.name && this.fb.auth.currentUser) {
       await updateProfile(this.fb.auth.currentUser, { displayName: data.name });
@@ -95,4 +94,7 @@ export class AuthService {
     return signInWithEmailAndPassword(this.fb.auth, email, pass);
   }
 
+  async logout() {
+    return this.fb.auth.signOut();
+  }
 }

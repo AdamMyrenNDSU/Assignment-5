@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { form, FormField, required, min } from '@angular/forms/signals'; // Angular 21 experimental API
 import { FinanceService, Transaction } from '../finance.service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-transaction',
@@ -14,6 +15,7 @@ import { FinanceService, Transaction } from '../finance.service';
 })
 export class TransactionComponent {
   public financeService = inject(FinanceService);
+  public authService = inject(AuthService);
 
   // Track if we are editing an existing transaction
   editingId = signal<string | null>(null);
@@ -42,15 +44,35 @@ export class TransactionComponent {
   async save() {
     if (!this.transactionForm().valid()) return;
 
-    const currentData = this.transactionData();
-    const userId = 'CURRENT_USER_ID'; // Replace with your actual auth state logic
+    // Try the signal first, fallback to the direct Firebase Auth instance
+    const userId = this.authService.userId || this.authService['fb'].auth.currentUser?.uid;
 
-    if (this.editingId()) {
-      await this.financeService.updateTransaction(this.editingId()!, currentData);
-    } else {
-      await this.financeService.addTransaction({ ...currentData, userId });
+    if (!userId) {
+      console.error('Current Signal Value:', this.authService.userId);
+      console.error('Firebase Auth Instance:', this.authService['fb'].auth.currentUser);
+      alert('Session not ready. Please wait a moment or log in again.');
+      return;
     }
-    this.reset();
+
+    const currentData = this.transactionData();
+
+    try {
+      if (this.editingId()) {
+        await this.financeService.updateTransaction(this.editingId()!, {
+          ...currentData,
+          userId,
+        });
+      } else {
+        await this.financeService.addTransaction({
+          ...currentData,
+          userId,
+        });
+      }
+      this.reset();
+    } catch (error) {
+      console.error('Firebase Save Error:', error);
+      alert('Check your Firebase Security Rules!');
+    }
   }
 
   edit(t: Transaction) {

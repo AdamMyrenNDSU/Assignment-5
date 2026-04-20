@@ -66,13 +66,24 @@ export class FinanceService {
   });
 
   listenToTransactions(userId: string, onUpdate?: () => void) {
-    const q = query(collection(this.fb.db, 'transactions'), where('userId', '==', userId));
+    const q = query(
+      collection(this.fb.db, 'transactions'),
+      where('userId', '==', userId),
+      //orderBy('date', 'desc'),
+    );
 
     return onSnapshot(q, (snapshot) => {
-      // Update the signal with a NEW array reference (crucial for reactivity)
-      this.transactions.set(snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Transaction));
+      const transactions = snapshot.docs.map(
+        (d) =>
+          ({
+            id: d.id,
+            ...d.data(),
+          }) as Transaction,
+      );
 
-      // Notify the component to refresh the UI
+      this.transactions.set([...transactions]);
+
+      // Now this callback will work without a TS error
       if (onUpdate) onUpdate();
     });
   }
@@ -102,4 +113,10 @@ export class FinanceService {
       throw error;
     }
   }
+
+  rawTotalExpenses = computed(() =>
+    this.transactions()
+      .filter((t) => t.type === 'expense')
+      .reduce((acc, t) => acc + t.amount, 0),
+  );
 }

@@ -1,5 +1,11 @@
-// dashboard.component.ts
-import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  inject,
+  ChangeDetectorRef,
+  OnInit,
+  OnDestroy,
+  ApplicationRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FinanceService } from '../finance.service';
@@ -14,49 +20,35 @@ import { TransactionComponent } from '../transaction.component/transaction.compo
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit, OnDestroy {
+  // Added implements OnInit
+  private appRef = inject(ApplicationRef); // Use ApplicationRef for a global "tick"
   public financeService = inject(FinanceService);
   private fb = inject(FirebaseService);
-  private cdr = inject(ChangeDetectorRef); // 2. Inject it
+  private cdr = inject(ChangeDetectorRef);
 
-  // Local state for the "Add Transaction" form
-  newTransaction = {
-    amount: 0,
-    category: 'Food',
-    notes: '',
-    type: 'expense' as 'income' | 'expense',
-  };
+  private unsubscribe?: () => void;
 
-  constructor() {
+  ngOnInit() {
     onAuthStateChanged(this.fb.auth, (user) => {
       if (user) {
-        // 3. Capture the unsubscribe function
-        const unsubscribe = this.financeService.listenToTransactions(user.uid, () => {
-          // 4. This callback runs every time Firestore data changes
-          this.cdr.markForCheck();
+        this.unsubscribe = this.financeService.listenToTransactions(user.uid, () => {
+          // CRITICAL: Forces a full application check, ensuring zoneless UI updates
+          this.appRef.tick();
         });
       }
     });
   }
 
-  async handleAdd() {
-    const user = this.fb.auth.currentUser;
-    if (!user) return;
-
-    await this.financeService.addTransaction({
-      ...this.newTransaction,
-      date: new Date().toISOString(),
-      userId: user.uid,
-    });
-
-    // Reset form
-    this.newTransaction.amount = 0;
-    this.newTransaction.notes = '';
+  ngOnDestroy() {
+    this.unsubscribe?.();
   }
 
+  // Helper for deleting from the list
   async delete(id: string) {
     if (confirm('Delete this transaction?')) {
       await this.financeService.deleteTransaction(id);
+      // No need to manually refresh; onSnapshot handles it
     }
   }
 }
