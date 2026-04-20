@@ -1,0 +1,136 @@
+/* Container with a subtle gradient background */
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top right, #1e293b, #0f172a);
+  font-family: 'Inter', sans-serif;
+  color: white;
+  padding: 20px;
+}
+
+/* Glassmorphism Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  transition: border 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #38bdf8;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  margin-bottom: 12px;
+}
+
+.primary-btn {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.primary-btn:hover {
+  background: #7dd3fc;
+  transform: translateY(-2px);
+}
+
+.google-btn {
+  background: white;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.logout-btn {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* auth.component.css updates */
+
+.container {
+  margin: 0;
+  padding: 0;
+  width: 100vw; /* Ensure full viewport width */
+  min-height: 100vh;
+  /* ... rest of your existing code ... */
+}
+
+.glass-card {
+  /* ... existing code ... */
+  border: 1px solid rgba(255, 255, 255, 0.08); /* Fainter, softer border */
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6); /* Deeper shadow for depth */
+}
+
+/* Fix for that "OR" divider line */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.divider:not(:empty)::before { margin-right: .5em; }
+.divider:not(:empty)::after { margin-left: .5em; }
+
+.toggle-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.toggle-link span {
+  color: #38bdf8;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.toggle-link span:hover {
+  color: #7dd3fc;
+}
