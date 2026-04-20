@@ -1,0 +1,85 @@
+<!-- dashboard.component.html -->
+<div class="dashboard-container">
+  <section class="transaction-section">
+    <app-transaction></app-transaction>
+  </section>
+  <!-- 1. Overview Stats -->
+  <section class="stats-grid">
+    <div class="card">
+      <h3>Total Expenses</h3>
+      <p class="amount text-red">${{ financeService.totalExpenses() }}</p>
+    </div>
+
+    <div class="card">
+      <h3>Budget Alerts</h3>
+      @for (alert of financeService.budgetAlerts(); track alert.category) {
+        <div class="alert" [class.danger]="alert.isExceeded">
+          {{ alert.category }}: {{ alert.isExceeded ? 'Limit Exceeded!' : 'Nearing Limit' }}
+        </div>
+      } @empty {
+        <p class="text-green">All budgets healthy ✅</p>
+      }
+    </div>
+  </section>
+
+  <!-- 2. Add New Transaction -->
+  <section class="card form-inline">
+    <input type="number" [(ngModel)]="newTransaction.amount" placeholder="Amount" />
+    <select [(ngModel)]="newTransaction.category">
+      @for (cat of financeService.categories(); track cat) {
+        <option [value]="cat">{{ cat }}</option>
+      }
+    </select>
+    <input type="text" [(ngModel)]="newTransaction.notes" placeholder="Notes (e.g. Lunch)" />
+    <button (click)="handleAdd()">Add Transaction</button>
+  </section>
+
+  <!-- 3. Filters -->
+  <section class="filters">
+    <input
+      type="text"
+      [ngModel]="financeService.searchQuery()"
+      (ngModelChange)="financeService.searchQuery.set($event)"
+      placeholder="Search transactions..."
+    />
+
+    <select
+      [ngModel]="financeService.selectedCategory()"
+      (ngModelChange)="financeService.selectedCategory.set($event)"
+    >
+      <option value="All">All Categories</option>
+      @for (cat of financeService.categories(); track cat) {
+        <option [value]="cat">{{ cat }}</option>
+      }
+    </select>
+  </section>
+
+  <!-- 4. Transactions List -->
+  <section class="card list-container">
+    <h2>Recent History</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Notes</th>
+          <th>Amount</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of financeService.filteredTransactions(); track t.id) {
+          <tr>
+            <td>{{ t.category }}</td>
+            <td>{{ t.notes }}</td>
+            <td [class.text-red]="t.type === 'expense'">${{ t.amount }}</td>
+            <td><button (click)="delete(t.id!)" class="btn-delete">🗑️</button></td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4">No transactions found.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

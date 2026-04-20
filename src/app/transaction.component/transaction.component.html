@@ -1,0 +1,56 @@
+<!-- transaction.component.html -->
+<div class="container">
+  <div class="glass-card">
+    <header>
+      <h1>{{ editingId() ? 'Update Entry' : 'New Transaction' }}</h1>
+      <p class="subtitle">Track your income and expenses</p>
+    </header>
+
+    <div class="form">
+      <!-- Type Toggle -->
+      <div class="type-toggle">
+        <button
+          type="button"
+          [class.active-income]="transactionData().type === 'income'"
+          (click)="updateType('income')"
+        >
+          Income
+        </button>
+        <button
+          type="button"
+          [class.active-expense]="transactionData().type === 'expense'"
+          (click)="updateType('expense')"
+        >
+          Expense
+        </button>
+      </div>
+
+      <div class="input-with-symbol">
+        <span>$</span>
+        <input type="number" [formField]="transactionForm.amount" placeholder="0.00" />
+      </div>
+
+      <select [formField]="transactionForm.category">
+        @for (cat of financeService.categories(); track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+
+      <input type="date" [formField]="transactionForm.date" />
+
+      <input
+        type="text"
+        [formField]="transactionForm.notes"
+        placeholder="Notes (e.g., Grocery shopping)"
+      />
+
+      <button (click)="save()" [disabled]="!transactionForm().valid()" class="primary-btn">
+        {{ editingId() ? 'Update Transaction' : 'Add Transaction' }}
+      </button>
+
+      @if (editingId()) {
+        <button (click)="reset()" class="logout-btn">Cancel Edit</button>
+      }
+    </div>
+  </div>
+</div>

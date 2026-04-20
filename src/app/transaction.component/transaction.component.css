@@ -1,0 +1,62 @@
+/* Import your shared container/glass-card styles or copy them here */
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Style for the dropdown to match inputs */
+select {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  appearance: none; /* Removes default arrow */
+}
+
+/* Custom Type Toggle Styling */
+.type-toggle {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.type-toggle button {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 0;
+}
+
+.type-toggle button.active-income {
+  background: #22c55e;
+  color: #062010;
+  border-color: #22c55e;
+}
+
+.type-toggle button.active-expense {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+/* Amount Input Specifics */
+.input-with-symbol {
+  position: relative;
+}
+
+.input-with-symbol span {
+  position: absolute;
+  left: 15px;
+  top: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.input-with-symbol input {
+  padding-left: 35px;
+}
