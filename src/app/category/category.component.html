@@ -1,25 +1,66 @@
-<div class="category-page">
-  <h2>My Categories</h2>
-  <div class="category-form">
-    <!-- Use [formField] instead of [field] -->
-    <input [formField]="categoryForm.name" placeholder="Category Name" />
+<div class="container">
+  <div class="glass-card wide">
+    <h2 class="title">My Categories</h2>
 
-    <select [formField]="categoryForm.icon">
-      <option value="utensils">Food</option>
-      <option value="car">Transport</option>
-      <option value="home">Rent</option>
-    </select>
-
-    <input type="color" [formField]="categoryForm.color" />
-
-    <button (click)="save()">Add Category</button>
-  </div>
-
-  <div class="category-list">
-    @for (cat of catService.userCategories(); track cat.id) {
-      <div class="category-item" [style.border-left-color]="cat.color">
-        <span>{{ cat.name }}</span>
+    <div class="category-form">
+      <!-- Better Category Typing Box -->
+      <div class="form-field">
+        <label class="field-label">Category Name</label>
+        <div class="input-wrapper">
+          <input [formField]="categoryForm.name" placeholder="e.g., Grocery" class="glass-input" />
+          <span class="focus-glow"></span>
+        </div>
       </div>
-    }
+
+      <div class="row">
+        <!-- Icon Selection with Label -->
+        <div class="form-field flex-2">
+          <label class="field-label">Select Icon</label>
+          <select [formField]="categoryForm.icon" class="glass-select">
+            <option value="utensils">🍴 Food & Dining</option>
+            <option value="car">🚗 Transportation</option>
+            <option value="home">🏠 Household/Rent</option>
+            <option value="shopping-cart">🛒 Shopping</option>
+            <option value="heart">❤️ Health & Wellness</option>
+          </select>
+        </div>
+
+        <div class="form-field flex-6">
+          <label class="field-label"> Color</label>
+
+          <div class="color-picker-container">
+            <!-- The new color header bar -->
+            <div class="color-preview-header" [style.background]="categoryForm.color()"></div>
+
+            <div class="color-picker-wrapper">
+              <input type="color" [formField]="categoryForm.color" class="color-input" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="primary-btn" (click)="save()">Add Category</button>
+    </div>
+
+    <div class="divider">EXISTING CATEGORIES</div>
+
+    <div class="category-list">
+      @for (cat of catService.allCategories(); track cat.name) {
+        <div class="category-item" [style.border-left-color]="cat.color">
+          <span class="cat-name">{{ cat.name }}</span>
+          @if (cat.userId === 'system') {
+            <span class="system-badge">System</span>
+          }
+        </div>
+      }
+      @for (cat of catService.userCategories(); track cat.id) {
+        <div class="category-item" [style.border-left-color]="cat.color">
+          <span class="cat-name">{{ cat.name }}</span>
+          @if (cat.userId === 'system') {
+            <span class="system-badge">System</span>
+          }
+        </div>
+      }
+    </div>
   </div>
 </div>
