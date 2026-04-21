@@ -1,62 +1,148 @@
-/* Import your shared container/glass-card styles or copy them here */
-
-.subtitle {
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 25px;
-  text-align: center;
+/* Re-use base container/glass-card from Auth/Category */
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at top right, #1e293b, #0f172a);
+  font-family: 'Inter', sans-serif;
+  color: white;
+  padding: 20px;
 }
 
-/* Style for the dropdown to match inputs */
-select {
+.glass-card.wide {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 550px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 700;
+}
+
+/* Type Toggle Styling */
+.type-toggle {
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px;
+  border-radius: 12px;
+  gap: 4px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.income.active {
+  background: #22c55e;
+  color: #064e3b;
+}
+.toggle-btn.expense.active {
+  background: #ef4444;
+  color: #450a0a;
+}
+
+/* Form Fields (Matching Category Style) */
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  margin-left: 4px;
+}
+
+.glass-input,
+.glass-select,
+.glass-textarea {
   width: 100%;
   padding: 14px;
-  margin-bottom: 20px;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   color: white;
   font-size: 16px;
-  appearance: none; /* Removes default arrow */
+  transition: border 0.3s ease;
+  box-sizing: border-box;
 }
 
-/* Custom Type Toggle Styling */
-.type-toggle {
+.glass-input:focus,
+.glass-select:focus,
+.glass-textarea:focus {
+  outline: none;
+  border-color: #38bdf8;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.glass-textarea {
+  height: 80px;
+  resize: none;
+}
+
+.amount {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  color: #38bdf8;
+}
+
+.row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 15px;
+  margin: 15px 0;
+}
+.flex-2 {
+  flex: 2;
+}
+.flex-1 {
+  flex: 1;
 }
 
-.type-toggle button {
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 0;
+.primary-btn {
+  width: 100%;
+  padding: 16px;
+  background: #38bdf8;
+  color: #0f172a;
+  border-radius: 12px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 10px;
 }
 
-.type-toggle button.active-income {
-  background: #22c55e;
-  color: #062010;
-  border-color: #22c55e;
+.primary-btn:hover {
+  background: #7dd3fc;
+  transform: translateY(-2px);
 }
 
-.type-toggle button.active-expense {
-  background: #ef4444;
+.dynamic-select {
+  border-left-width: 6px !important; /* Thick color bar on the left */
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Make the options look cleaner */
+.glass-select option {
+  background: #1e293b; /* Dark background so text is readable */
   color: white;
-  border-color: #ef4444;
-}
-
-/* Amount Input Specifics */
-.input-with-symbol {
-  position: relative;
-}
-
-.input-with-symbol span {
-  position: absolute;
-  left: 15px;
-  top: 14px;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.input-with-symbol input {
-  padding-left: 35px;
+  padding: 10px;
 }

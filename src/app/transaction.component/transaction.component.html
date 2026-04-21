@@ -1,73 +1,86 @@
-<!-- transaction.component.html -->
 <div class="container">
-  <div class="glass-card">
-    <header>
-      <h1>{{ editingId() ? 'Update Entry' : 'New Transaction' }}</h1>
-      <p class="subtitle">Track your income and expenses</p>
-    </header>
+  <div class="glass-card wide">
+    <h2 class="title">Add Transaction</h2>
 
-    <div class="form">
-      <!-- Type Toggle -->
-      <div class="type-toggle">
-        <button
-          type="button"
-          [class.active-income]="transactionData().type === 'income'"
-          (click)="updateType('income')"
-        >
-          Income
-        </button>
-        <button
-          type="button"
-          [class.active-expense]="transactionData().type === 'expense'"
-          (click)="updateType('expense')"
-        >
-          Expense
-        </button>
-      </div>
-
-      <div class="input-with-symbol">
-        <span>$</span>
-        <input type="number" [formField]="transactionForm.amount" placeholder="0.00" />
-      </div>
-
+    <div class="transaction-form">
+      <!-- Type Toggle (Income vs Expense) -->
       <div class="form-field">
-        <label>Category</label>
-        <select [formField]="transactionForm.category">
-          <option value="" disabled>Select a Category</option>
-
-          @for (cat of catService.allCategories(); track cat.name) {
-            <option [value]="cat.name">{{ cat.name }}</option>
-          }
-
-          <!-- Loop through dynamic categories from Firebase -->
-          @for (cat of catService.userCategories(); track cat.id) {
-            <option [value]="cat.name">
-              {{ cat.name }}
-            </option>
-          }
-
-          <!-- Fallback if no categories exist -->
-          @if (catService.userCategories().length === 0) {
-            <option disabled>No categories found. Add some in the Categories tab!</option>
-          }
-        </select>
+        <label class="field-label">Transaction Type</label>
+        <div class="type-toggle">
+          <button
+            type="button"
+            class="toggle-btn income"
+            [class.active]="transactionData().type === 'income'"
+            (click)="updateType('income')"
+          >
+            Income
+          </button>
+          <button
+            type="button"
+            class="toggle-btn expense"
+            [class.active]="transactionData().type === 'expense'"
+            (click)="updateType('expense')"
+          >
+            Expense
+          </button>
+        </div>
       </div>
 
-      <input type="date" [formField]="transactionForm.date" />
+      <!-- Amount Input with Glow -->
+      <div class="form-field">
+        <label class="field-label">Amount</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            [formField]="transactionForm.amount"
+            placeholder="0.00"
+            class="glass-input amount"
+          />
+        </div>
+      </div>
 
-      <input
-        type="text"
-        [formField]="transactionForm.notes"
-        placeholder="Notes (e.g., Grocery shopping)"
-      />
+      <div class="row">
+        <!-- Dynamic Category Dropdown -->
+        <div class="form-field flex-2">
+          <label class="field-label">Category</label>
 
-      <button (click)="save()" [disabled]="!transactionForm().valid()" class="primary-btn">
-        {{ editingId() ? 'Update Transaction' : 'Add Transaction' }}
+          <!-- The select box changes its "glow" based on the selected category color -->
+          <select
+            [formField]="transactionForm.category"
+            class="glass-select dynamic-select"
+            [style.border-left-color]="getSelectedCategoryColor()"
+          >
+            <option value="" disabled selected>Select a Category</option>
+
+            @for (cat of catService.allCategories(); track cat.name) {
+              <option [value]="cat.name">{{ getIcon(cat.icon) }} {{ cat.name }}</option>
+            }
+            @for (cat of catService.userCategories(); track cat.id) {
+              <option [value]="cat.name">{{ getIcon(cat.icon) }} {{ cat.name }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Date Picker -->
+        <div class="form-field flex-1">
+          <label class="field-label">Date</label>
+          <input type="date" [formField]="transactionForm.date" class="glass-input date-input" />
+        </div>
+      </div>
+
+      <!-- Notes Field -->
+      <div class="form-field">
+        <label class="field-label">Notes (Optional)</label>
+        <textarea
+          [formField]="transactionForm.notes"
+          placeholder="What was this for?"
+          class="glass-textarea"
+        ></textarea>
+      </div>
+
+      <button class="primary-btn add-btn" (click)="save()">
+        {{ editingId() ? 'Update' : 'Add' }} Transaction
       </button>
-
-      @if (editingId()) {
-        <button (click)="reset()" class="logout-btn">Cancel Edit</button>
-      }
     </div>
   </div>
 </div>

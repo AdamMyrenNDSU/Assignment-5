@@ -107,4 +107,26 @@ export class TransactionComponent {
       type: 'expense',
     });
   }
+
+  getIcon(iconName: string): string {
+    const iconMap: Record<string, string> = {
+      utensils: '🍴',
+      car: '🚗',
+      home: '🏠',
+      'shopping-cart': '🛒',
+      heart: '❤️',
+      'trending-up': '📈',
+      archive: '📦',
+    };
+    return iconMap[iconName] || '💰';
+  }
+
+  getSelectedCategoryColor(): string {
+    const selectedName = this.transactionData().category;
+    let category = this.catService.allCategories().find((c) => c.name === selectedName);
+    category
+      ? category.color
+      : (category = this.catService.userCategories().find((c) => c.name === selectedName));
+    return category ? category.color : 'rgba(255,255,255,0.1)';
+  }
 }
