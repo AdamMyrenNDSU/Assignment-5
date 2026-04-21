@@ -30,11 +30,28 @@
         <input type="number" [formField]="transactionForm.amount" placeholder="0.00" />
       </div>
 
-      <select [formField]="transactionForm.category">
-        @for (cat of financeService.categories(); track cat) {
-          <option [value]="cat">{{ cat }}</option>
-        }
-      </select>
+      <div class="form-field">
+        <label>Category</label>
+        <select [formField]="transactionForm.category">
+          <option value="" disabled>Select a Category</option>
+
+          @for (cat of catService.allCategories(); track cat.name) {
+            <option [value]="cat.name">{{ cat.name }}</option>
+          }
+
+          <!-- Loop through dynamic categories from Firebase -->
+          @for (cat of catService.userCategories(); track cat.id) {
+            <option [value]="cat.name">
+              {{ cat.name }}
+            </option>
+          }
+
+          <!-- Fallback if no categories exist -->
+          @if (catService.userCategories().length === 0) {
+            <option disabled>No categories found. Add some in the Categories tab!</option>
+          }
+        </select>
+      </div>
 
       <input type="date" [formField]="transactionForm.date" />
 

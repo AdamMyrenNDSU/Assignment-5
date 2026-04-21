@@ -1,0 +1,25 @@
+<div class="category-page">
+  <h2>My Categories</h2>
+  <div class="category-form">
+    <!-- Use [formField] instead of [field] -->
+    <input [formField]="categoryForm.name" placeholder="Category Name" />
+
+    <select [formField]="categoryForm.icon">
+      <option value="utensils">Food</option>
+      <option value="car">Transport</option>
+      <option value="home">Rent</option>
+    </select>
+
+    <input type="color" [formField]="categoryForm.color" />
+
+    <button (click)="save()">Add Category</button>
+  </div>
+
+  <div class="category-list">
+    @for (cat of catService.userCategories(); track cat.id) {
+      <div class="category-item" [style.border-left-color]="cat.color">
+        <span>{{ cat.name }}</span>
+      </div>
+    }
+  </div>
+</div>

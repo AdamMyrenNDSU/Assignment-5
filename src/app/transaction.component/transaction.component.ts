@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { form, FormField, required, min } from '@angular/forms/signals'; // Angular 21 experimental API
 import { FinanceService, Transaction } from '../finance.service';
 import { AuthService } from '../auth.service';
+import { CategoryService } from '../category.service';
 
 @Component({
   selector: 'app-transaction',
@@ -16,6 +17,15 @@ import { AuthService } from '../auth.service';
 export class TransactionComponent {
   public financeService = inject(FinanceService);
   public authService = inject(AuthService);
+  public catService = inject(CategoryService);
+
+  constructor() {
+    // 2. Start listening for categories if a user is logged in
+    const userId = this.authService.userId;
+    if (userId) {
+      this.catService.listenToCategories(userId);
+    }
+  }
 
   // Track if we are editing an existing transaction
   editingId = signal<string | null>(null);
