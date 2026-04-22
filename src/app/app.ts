@@ -5,6 +5,7 @@ import { DashboardComponent } from './dashboard.component/dashboard.component';
 import { AuthService } from './auth.service';
 import { Category } from './category/category.component';
 import { CategoryService } from './category.service';
+import { FinanceService } from './finance.service';
 
 @Component({
   selector: 'app-root',
@@ -26,13 +27,15 @@ export class App {
 
   catService = inject(CategoryService);
 
-  constructor() {
+  constructor(private finance: FinanceService) {
     // This effect runs every time auth.currentUser changes
     effect(() => {
       const user = this.auth.currentUser();
       if (user) {
         console.log('User detected on refresh, starting category listener...');
         this.catService.listenToCategories(user.uid);
+        this.finance.listenToTransactions(user.uid);
+        this.finance.listenToUserProfile(user.uid);
       }
     });
   }

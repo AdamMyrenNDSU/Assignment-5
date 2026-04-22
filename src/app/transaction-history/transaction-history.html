@@ -1,0 +1,78 @@
+<!-- dashboard.component.html -->
+<div class="dashboard-container">
+  <!-- 1. Overview Stats -->
+  <section class="stats-grid">
+    <div class="stat-card panel">
+      <h3>Total Expenses</h3>
+      <p class="amount text-red">${{ financeService.rawTotalExpenses() }}</p>
+    </div>
+
+    <div class="stat-card panel">
+      <h3>Budget Alerts</h3>
+      @for (alert of financeService.budgetAlerts(); track alert.category) {
+        <div class="alert" [class.danger]="alert.isExceeded">
+          {{ alert.category }}: {{ alert.isExceeded ? 'Limit Exceeded!' : 'Nearing Limit' }}
+        </div>
+      } @empty {
+        <p class="text-green">All budgets healthy ✅</p>
+      }
+    </div>
+  </section>
+
+  <!-- 2. Filters (Styled to match your glass inputs) -->
+  <section class="panel filter-bar">
+    <input
+      type="text"
+      [ngModel]="financeService.searchQuery()"
+      (ngModelChange)="financeService.searchQuery.set($event)"
+      placeholder="Search notes..."
+    />
+
+    <select
+      [ngModel]="financeService.selectedCategory()"
+      (ngModelChange)="financeService.selectedCategory.set($event)"
+    >
+      <option value="All">All Categories</option>
+      @for (cat of financeService.categories(); track cat) {
+        <option [value]="cat">{{ cat }}</option>
+      }
+    </select>
+  </section>
+
+  <!-- 3. Transactions List -->
+  <section class="panel list-container">
+    <h2>Recent History</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Notes</th>
+          <th>Amount</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of financeService.filteredTransactions(); track t.id) {
+          <tr>
+            <td>
+              <span class="pill" [ngClass]="t.type">{{ t.category }}</span>
+            </td>
+            <td>{{ t.notes }}</td>
+            <td [style.color]="t.type === 'expense' ? '#f87171' : '#4ade80'">
+              {{ t.type === 'expense' ? '-' : '+' }}${{ t.amount }}
+            </td>
+            <td>
+              <button (click)="delete(t.id!)" class="icon-btn">🗑️</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 40px">
+              No transactions found. Start by adding one above!
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>

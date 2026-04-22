@@ -137,4 +137,24 @@ export class FinanceService {
       .filter((t) => t.type === 'expense')
       .reduce((acc, t) => acc + t.amount, 0),
   );
+
+  public totalIncome = computed(() =>
+    this.transactions()
+      .filter((t) => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0),
+  );
+
+  // 2. Groups all expenses by category for pie charts
+  public categoryTotals = computed(() => {
+    const totals: Record<string, number> = {};
+    this.transactions()
+      .filter((t) => t.type === 'expense')
+      .forEach((t) => {
+        totals[t.category] = (totals[t.category] || 0) + t.amount;
+      });
+    return totals;
+  });
+
+  // 3. (Optional Helper) Net balance calculation
+  public netBalance = computed(() => this.totalIncome() - this.totalExpenses());
 }

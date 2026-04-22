@@ -1,78 +1,52 @@
-<!-- dashboard.component.html -->
-<div class="dashboard-container">
-  <!-- 1. Overview Stats -->
-  <section class="stats-grid">
-    <div class="stat-card panel">
-      <h3>Total Expenses</h3>
-      <p class="amount text-red">${{ financeService.rawTotalExpenses() }}</p>
+<div class="container">
+  <div class="dashboard-wrapper">
+    <!-- Top Summary -->
+    <div class="summary-grid">
+      <div class="glass-card stat-card">
+        <label>Total Balance</label>
+        <h2 [class.negative]="finance.netBalance() < 0">{{ finance.netBalance() | currency }}</h2>
+      </div>
+      <div class="glass-card stat-card">
+        <label>Income</label>
+        <h2 class="income">{{ finance.totalIncome() | currency }}</h2>
+      </div>
+      <div class="glass-card stat-card">
+        <label>Expenses</label>
+        <h2 class="expense">{{ finance.totalExpenses() | currency }}</h2>
+      </div>
     </div>
 
-    <div class="stat-card panel">
-      <h3>Budget Alerts</h3>
-      @for (alert of financeService.budgetAlerts(); track alert.category) {
-        <div class="alert" [class.danger]="alert.isExceeded">
-          {{ alert.category }}: {{ alert.isExceeded ? 'Limit Exceeded!' : 'Nearing Limit' }}
+    <!-- Charts -->
+    <div class="chart-grid">
+      <div class="glass-card chart-container">
+        <h3>Category Breakdown</h3>
+        <div class="canvas-wrapper">
+          <canvas #pieCanvas></canvas>
         </div>
-      } @empty {
-        <p class="text-green">All budgets healthy ✅</p>
-      }
+      </div>
+      <div class="glass-card chart-container">
+        <h3>Cash Flow</h3>
+        <div class="canvas-wrapper">
+          <canvas #barCanvas></canvas>
+        </div>
+      </div>
     </div>
-  </section>
 
-  <!-- 2. Filters (Styled to match your glass inputs) -->
-  <section class="panel filter-bar">
-    <input
-      type="text"
-      [ngModel]="financeService.searchQuery()"
-      (ngModelChange)="financeService.searchQuery.set($event)"
-      placeholder="Search notes..."
-    />
-
-    <select
-      [ngModel]="financeService.selectedCategory()"
-      (ngModelChange)="financeService.selectedCategory.set($event)"
-    >
-      <option value="All">All Categories</option>
-      @for (cat of financeService.categories(); track cat) {
-        <option [value]="cat">{{ cat }}</option>
-      }
-    </select>
-  </section>
-
-  <!-- 3. Transactions List -->
-  <section class="panel list-container">
-    <h2>Recent History</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Category</th>
-          <th>Notes</th>
-          <th>Amount</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (t of financeService.filteredTransactions(); track t.id) {
-          <tr>
-            <td>
-              <span class="pill" [ngClass]="t.type">{{ t.category }}</span>
-            </td>
-            <td>{{ t.notes }}</td>
-            <td [style.color]="t.type === 'expense' ? '#f87171' : '#4ade80'">
-              {{ t.type === 'expense' ? '-' : '+' }}${{ t.amount }}
-            </td>
-            <td>
-              <button (click)="delete(t.id!)" class="icon-btn">🗑️</button>
-            </td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="4" style="text-align: center; padding: 40px">
-              No transactions found. Start by adding one above!
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </section>
+    <!-- Budget Progress -->
+    <div class="glass-card budget-section">
+      <div class="budget-info">
+        <span>Budget Usage</span>
+        <span
+          >{{ finance.totalExpenses() | currency }} / {{ finance.userBudget() | currency }}</span
+        >
+      </div>
+      <div class="progress-bar-bg">
+        <div
+          class="progress-fill"
+          [style.width.%]="(finance.totalExpenses() / (finance.userBudget() || 1)) * 100"
+          [class.danger]="finance.totalExpenses() > finance.userBudget()"
+        ></div>
+      </div>
+    </div>
+  </div>
 </div>
