@@ -1,9 +1,60 @@
 <div class="container">
   <div class="dashboard-wrapper">
+    <section class="glass-card filter-bar">
+      <div class="filter-group">
+        <!-- Date Range Section -->
+        <div class="date-range-group">
+          <div class="input-wrapper">
+            <label class="field-label">From</label>
+            <input
+              type="date"
+              [ngModel]="financeService.startDate()"
+              (ngModelChange)="financeService.startDate.set($event)"
+              class="glass-input mini"
+            />
+          </div>
+          <div class="input-wrapper">
+            <label class="field-label">To</label>
+            <input
+              type="date"
+              [ngModel]="financeService.endDate()"
+              (ngModelChange)="financeService.endDate.set($event)"
+              class="glass-input mini"
+            />
+          </div>
+        </div>
+
+        <!-- Existing Search & Category Boxes -->
+        <div class="input-wrapper search-box">
+          <label class="field-label">Search</label>
+          <input
+            type="text"
+            [ngModel]="financeService.searchQuery()"
+            (ngModelChange)="financeService.searchQuery.set($event)"
+            placeholder="Search notes..."
+            class="glass-input"
+          />
+        </div>
+
+        <div class="input-wrapper category-box">
+          <label class="field-label">Category</label>
+          <select
+            [ngModel]="financeService.selectedCategory()"
+            (ngModelChange)="financeService.selectedCategory.set($event)"
+            class="glass-select"
+          >
+            <option value="All">All Categories</option>
+            @for (cat of catService.userCategories(); track cat.id) {
+              <option [value]="cat.name">{{ cat.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </section>
     <!-- Top Summary -->
     <div class="summary-grid">
       <div class="glass-card stat-card">
-        <label>Total Balance</label>
+        <label>Difference</label>
         <h2 [class.negative]="finance.netBalance() < 0">{{ finance.netBalance() | currency }}</h2>
       </div>
       <div class="glass-card stat-card">
@@ -34,18 +85,32 @@
 
     <!-- Budget Progress -->
     <div class="glass-card budget-section">
-      <div class="budget-info">
-        <span>Budget Usage</span>
-        <span
-          >{{ finance.totalExpenses() | currency }} / {{ finance.userBudget() | currency }}</span
-        >
-      </div>
-      <div class="progress-bar-bg">
-        <div
-          class="progress-fill"
-          [style.width.%]="(finance.totalExpenses() / (finance.userBudget() || 1)) * 100"
-          [class.danger]="finance.totalExpenses() > finance.userBudget()"
-        ></div>
+      <h3>Budget by Category</h3>
+      <div class="category-budget-list">
+        @for (item of finance.categorySpending(); track item.name) {
+          <div class="category-progress-item">
+            <div class="budget-info">
+              <span class="cat-label">
+                <span class="dot" [style.background]="item.color"></span>
+                {{ item.name }}
+              </span>
+              <span class="amount-label" [class.danger]="item.isOver">
+                {{ item.spent | currency }} / {{ item.budget | currency }}
+              </span>
+            </div>
+
+            <div class="progress-bar-bg">
+              <div
+                class="progress-fill"
+                [style.width.%]="item.percent"
+                [style.background]="item.color"
+                [class.pulse]="item.isOver"
+              ></div>
+            </div>
+          </div>
+        } @empty {
+          <p class="empty-msg">No budgets set. Add limits in the Categories page.</p>
+        }
       </div>
     </div>
   </div>

@@ -12,6 +12,7 @@ import { FinanceService } from '../finance.service';
 import { FirebaseService } from '../firebase.service';
 import { onAuthStateChanged } from 'firebase/auth';
 import { TransactionComponent } from '../transaction.component/transaction.component';
+import { CategoryService } from '../category.service';
 
 @Component({
   selector: 'app-transaction-history',
@@ -25,6 +26,7 @@ export class TransactionHistory {
   public financeService = inject(FinanceService);
   private fb = inject(FirebaseService);
   private cdr = inject(ChangeDetectorRef);
+  public catService = inject(CategoryService);
 
   private unsubscribe?: () => void;
 

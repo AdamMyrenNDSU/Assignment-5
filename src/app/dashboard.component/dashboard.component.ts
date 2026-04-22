@@ -3,17 +3,19 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FinanceService } from '../finance.service';
 import { CategoryService } from '../category.service';
 import Chart from 'chart.js/auto';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe],
+  imports: [CommonModule, CurrencyPipe, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements AfterViewInit {
   public finance = inject(FinanceService);
   public catService = inject(CategoryService);
+  public financeService = inject(FinanceService);
 
   @ViewChild('pieCanvas') pieCanvas!: ElementRef;
   @ViewChild('barCanvas') barCanvas!: ElementRef;
@@ -24,9 +26,15 @@ export class DashboardComponent implements AfterViewInit {
   constructor() {
     // This effect runs every time any signal inside it (transactions, totalIncome, etc.) changes
     effect(() => {
-      // Trigger update only if charts are initialized
+      // 1. READ the signals here to establish dependency
+      const income = this.finance.totalIncome();
+      const expenses = this.finance.totalExpenses();
+      const catTotals = this.finance.filteredCategoryTotals();
+      const allCategories = this.catService.userCategories();
+
+      // 2. Only run update if charts are actually ready
       if (this.pieChart && this.barChart) {
-        this.syncChartsWithData();
+        this.syncChartsWithData2(income, expenses, catTotals, allCategories);
       }
     });
   }
@@ -66,13 +74,13 @@ export class DashboardComponent implements AfterViewInit {
     if (!this.pieChart || !this.barChart) return;
 
     // --- Update Pie Chart ---
-    const catData = this.finance.categoryTotals(); // { 'Food': 200, 'Rent': 1200 }
+    const catData = this.finance.filteredCategoryTotals(); // { 'Food': 200, 'Rent': 1200 }
     const labels = Object.keys(catData);
     const values = Object.values(catData);
 
     // Map each label to the color defined in your CategoryService
     const colors = labels.map((catName) => {
-      const category = this.catService.allCategories().find((c) => c.name === catName);
+      const category = this.catService.userCategories().find((c) => c.name === catName);
       return category ? category.color : '#38bdf8'; // Fallback to blue if not found
     });
 
@@ -86,9 +94,39 @@ export class DashboardComponent implements AfterViewInit {
 
     // --- Update Bar Chart (Keeping your existing logic) ---
     this.barChart.data.datasets[0].data = [
-      this.finance.totalIncome(),
+      this.finance.totalIncome(), // Ensure these signals now use filteredTransactions!
       this.finance.totalExpenses(),
     ];
     this.barChart.update();
+  }
+
+  private syncChartsWithData2(
+    income: number,
+    expenses: number,
+    catData: Record<string, number>,
+    categories: any[],
+  ) {
+    // --- Update Bar Chart ---
+    this.barChart!.data.datasets[0].data = [income, expenses];
+    this.barChart!.update();
+
+    // --- Update Pie Chart with Dynamic Colors ---
+    const labels = Object.keys(catData);
+    const values = Object.values(catData);
+
+    // Map each slice to its category's color
+    const colors = labels.map((catName) => {
+      const match = categories.find((c) => c.name === catName);
+      return match ? match.color : '#38bdf8'; // Fallback to blue
+    });
+
+    this.pieChart!.data.labels = labels;
+    this.pieChart!.data.datasets[0].data = values;
+    this.pieChart!.data.datasets[0].backgroundColor = colors;
+
+    // Optional: Make the borders match the theme
+    this.pieChart!.data.datasets[0].borderColor = 'rgba(15, 23, 42, 0.5)';
+
+    this.pieChart!.update();
   }
 }

@@ -3,7 +3,9 @@
     @if (!user()) {
       <header>
         <h1>{{ isLoginMode() ? 'Welcome Back' : 'Create Account' }}</h1>
-        <p>{{ isLoginMode() ? 'Log in to manage your budget.' : 'Join us to start tracking goals.' }}</p>
+        <p>
+          {{ isLoginMode() ? 'Log in to manage your budget.' : 'Join us to start tracking goals.' }}
+        </p>
       </header>
 
       <div class="form">
@@ -12,7 +14,7 @@
         }
         <input [(ngModel)]="email" type="email" placeholder="Email Address" />
         <input [(ngModel)]="password" type="password" placeholder="Password" />
-        
+
         @if (isLoginMode()) {
           <button (click)="onLogin()" class="primary-btn">Sign In</button>
         } @else {
@@ -20,16 +22,13 @@
         }
 
         <div class="toggle-link">
-          {{ isLoginMode() ? "Don't have an account?" : "Already have an account?" }}
+          {{ isLoginMode() ? "Don't have an account?" : 'Already have an account?' }}
           <span (click)="toggleMode()">{{ isLoginMode() ? 'Sign Up' : 'Log In' }}</span>
         </div>
 
         <div class="divider"><span>OR</span></div>
-        
-        <button (click)="onGoogleLogin()" class="google-btn">
-          <img src="https://gstatic.com" width="18">
-          Continue with Google
-        </button>
+
+        <button (click)="onGoogleLogin()" class="google-btn">Continue with Google</button>
       </div>
     } @else {
       <!-- Profile management stays here -->
@@ -37,22 +36,13 @@
         <span class="badge">Active Profile</span>
         <h2>Hi, {{ user()?.name }}</h2>
       </header>
-      
+
       <div class="profile-stats">
         <div class="stat-item">
           <label>Email</label>
           <p>{{ user()?.email }}</p>
         </div>
 
-        <div class="stat-item">
-          <label>Monthly Budget Goal</label>
-          <div class="input-with-symbol">
-            <span>$</span>
-            <input type="number" [(ngModel)]="newBudgetGoal" placeholder="0.00" />
-          </div>
-        </div>
-
-        <button (click)="saveProfile()" class="primary-btn">Save Changes</button>
         <button (click)="logout()" class="logout-btn">Sign Out</button>
       </div>
     }

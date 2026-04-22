@@ -1,42 +1,56 @@
 <!-- dashboard.component.html -->
 <div class="dashboard-container">
-  <!-- 1. Overview Stats -->
-  <section class="stats-grid">
-    <div class="stat-card panel">
-      <h3>Total Expenses</h3>
-      <p class="amount text-red">${{ financeService.rawTotalExpenses() }}</p>
-    </div>
-
-    <div class="stat-card panel">
-      <h3>Budget Alerts</h3>
-      @for (alert of financeService.budgetAlerts(); track alert.category) {
-        <div class="alert" [class.danger]="alert.isExceeded">
-          {{ alert.category }}: {{ alert.isExceeded ? 'Limit Exceeded!' : 'Nearing Limit' }}
-        </div>
-      } @empty {
-        <p class="text-green">All budgets healthy ✅</p>
-      }
-    </div>
-  </section>
-
   <!-- 2. Filters (Styled to match your glass inputs) -->
-  <section class="panel filter-bar">
-    <input
-      type="text"
-      [ngModel]="financeService.searchQuery()"
-      (ngModelChange)="financeService.searchQuery.set($event)"
-      placeholder="Search notes..."
-    />
+  <section class="glass-card filter-bar">
+    <div class="filter-group">
+      <!-- Date Range Section -->
+      <div class="date-range-group">
+        <div class="input-wrapper">
+          <label class="field-label">From</label>
+          <input
+            type="date"
+            [ngModel]="financeService.startDate()"
+            (ngModelChange)="financeService.startDate.set($event)"
+            class="glass-input mini"
+          />
+        </div>
+        <div class="input-wrapper">
+          <label class="field-label">To</label>
+          <input
+            type="date"
+            [ngModel]="financeService.endDate()"
+            (ngModelChange)="financeService.endDate.set($event)"
+            class="glass-input mini"
+          />
+        </div>
+      </div>
 
-    <select
-      [ngModel]="financeService.selectedCategory()"
-      (ngModelChange)="financeService.selectedCategory.set($event)"
-    >
-      <option value="All">All Categories</option>
-      @for (cat of financeService.categories(); track cat) {
-        <option [value]="cat">{{ cat }}</option>
-      }
-    </select>
+      <!-- Existing Search & Category Boxes -->
+      <div class="input-wrapper search-box">
+        <label class="field-label">Search</label>
+        <input
+          type="text"
+          [ngModel]="financeService.searchQuery()"
+          (ngModelChange)="financeService.searchQuery.set($event)"
+          placeholder="Search notes..."
+          class="glass-input"
+        />
+      </div>
+
+      <div class="input-wrapper category-box">
+        <label class="field-label">Category</label>
+        <select
+          [ngModel]="financeService.selectedCategory()"
+          (ngModelChange)="financeService.selectedCategory.set($event)"
+          class="glass-select"
+        >
+          <option value="All">All Categories</option>
+          @for (cat of catService.userCategories(); track cat.id) {
+            <option [value]="cat.name">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
   </section>
 
   <!-- 3. Transactions List -->

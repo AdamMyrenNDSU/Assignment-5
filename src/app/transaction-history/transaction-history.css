@@ -121,3 +121,123 @@ tr:hover {
   color: #38bdf8;
   transform: scale(1.1);
 }
+
+.filter-bar {
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 15px;
+}
+
+.search-box {
+  flex: 2;
+}
+.category-box {
+  flex: 1;
+}
+
+/* Apply your existing glass-input styles or use these */
+.glass-input,
+.glass-select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: white;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.glass-input:focus,
+.glass-select:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  outline: none;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+}
+
+.glass-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s;
+}
+
+.table-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.income-text {
+  color: #4ade80;
+  font-weight: 600;
+}
+.expense-text {
+  color: #f87171;
+  font-weight: 600;
+}
+
+.pill {
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.date-range-group {
+  display: flex;
+  gap: 10px;
+  flex: 1.5;
+}
+
+.field-label {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 5px;
+  display: block;
+  font-weight: 500;
+}
+
+.glass-input.mini {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
+/* Ensure the focus glow applies to date inputs too */
+.input-wrapper:focus-within .focus-glow {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.glass-select {
+  background-color: rgba(255, 255, 255, 0.05); /* Match your glass theme */
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  appearance: none; /* Removes default browser styling */
+}
+
+/* Target the dropdown menu (the options) */
+.glass-select option {
+  background-color: #1a1a1a; /* Solid dark background to ensure readability */
+  color: white;
+  padding: 10px;
+}
+
+/* Fix for some browsers that keep a white background on hover/focus */
+.glass-select:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
