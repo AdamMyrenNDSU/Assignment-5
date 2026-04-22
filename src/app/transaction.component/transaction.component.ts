@@ -124,9 +124,7 @@ export class TransactionComponent {
   getSelectedCategoryColor(): string {
     const selectedName = this.transactionData().category;
     let category = this.catService.allCategories().find((c) => c.name === selectedName);
-    category
-      ? category.color
-      : (category = this.catService.userCategories().find((c) => c.name === selectedName));
+    category = this.catService.userCategories().find((c) => c.name === selectedName);
     return category ? category.color : 'rgba(255,255,255,0.1)';
   }
 }

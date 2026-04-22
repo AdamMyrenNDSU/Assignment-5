@@ -50,11 +50,8 @@
             class="glass-select dynamic-select"
             [style.border-left-color]="getSelectedCategoryColor()"
           >
-            <option value="" disabled selected>Select a Category</option>
+            <option value="" disabled>-- Choose Category --</option>
 
-            @for (cat of catService.allCategories(); track cat.name) {
-              <option [value]="cat.name">{{ getIcon(cat.icon) }} {{ cat.name }}</option>
-            }
             @for (cat of catService.userCategories(); track cat.id) {
               <option [value]="cat.name">{{ getIcon(cat.icon) }} {{ cat.name }}</option>
             }

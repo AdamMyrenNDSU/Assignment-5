@@ -217,3 +217,61 @@
   max-width: 600px;
   padding: 50px;
 }
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  /* ... your existing styles ... */
+}
+
+.delete-btn {
+  background: rgba(255, 68, 68, 0.1);
+  border: none;
+  color: #ff4444;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn:hover {
+  background: #ff4444;
+  color: white;
+  transform: scale(1.1);
+}
+
+.cat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn {
+  background: rgba(0, 123, 255, 0.1);
+  border: none;
+  color: #007bff;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-btn:hover {
+  background: #007bff;
+  color: white;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}

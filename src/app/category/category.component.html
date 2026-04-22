@@ -39,26 +39,76 @@
         </div>
       </div>
 
-      <button class="primary-btn" (click)="save()">Add Category</button>
+      <div class="form-field">
+        <label class="field-label">Monthly Budget ($)</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            [formField]="categoryForm.monthlyBudget"
+            placeholder="0.00"
+            class="glass-input"
+          />
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="primary-btn" (click)="save()">
+          {{ editingId() ? 'Update Category' : 'Add Category' }}
+        </button>
+        @if (editingId()) {
+          <button class="secondary-btn" (click)="cancelEdit()">Cancel</button>
+        }
+      </div>
     </div>
 
     <div class="divider">EXISTING CATEGORIES</div>
 
     <div class="category-list">
-      @for (cat of catService.allCategories(); track cat.name) {
-        <div class="category-item" [style.border-left-color]="cat.color">
-          <span class="cat-name">{{ cat.name }}</span>
-          @if (cat.userId === 'system') {
-            <span class="system-badge">System</span>
-          }
-        </div>
-      }
       @for (cat of catService.userCategories(); track cat.id) {
         <div class="category-item" [style.border-left-color]="cat.color">
-          <span class="cat-name">{{ cat.name }}</span>
-          @if (cat.userId === 'system') {
-            <span class="system-badge">System</span>
-          }
+          <div class="cat-content">
+            <span class="cat-name">{{ cat.name }}</span>
+            <span class="budget-label">Limit: ${{ cat.monthlyBudget || 0 }}</span>
+          </div>
+
+          <div class="actions">
+            <!-- Edit Button -->
+            <button class="edit-btn" (click)="editCategory(cat)">
+              <svg
+                xmlns="http://w3.org"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+
+            <!-- Existing Delete Button -->
+            <button class="delete-btn" (click)="deleteCategory(cat.id)">
+              <svg
+                xmlns="http://w3.org"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
         </div>
       }
     </div>
